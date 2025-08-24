@@ -1,0 +1,18 @@
+-- +goose Up
+-- +goose StatementBegin
+CREATE TABLE IF NOT EXISTS subscriptions (
+        id UUID PRIMARY KEY AUTO_INCREMENT,
+        title VARCHAR(255) NOT NULL,
+        price int NOT NULL,
+        user_id UUID NOT NULL,
+        start_date DATE NOT NULL,
+        end_date DATE,
+        created_at bigint NOT NULL,
+        updated_at bigint NOT NULL
+);
+-- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+DROP TABLE IF EXISTS subscriptions;
+-- +goose StatementEnd

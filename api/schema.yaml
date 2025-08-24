@@ -1,0 +1,260 @@
+openapi: 3.0.3
+info:
+  title: Subscription Service API
+  description: REST-сервис для агрегации данных об онлайн-подписках пользователей
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local server
+paths:
+  /subscriptions:
+    post:
+      summary: Создать подписку
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          description: Bad Request
+    get:
+      summary: Список подписок
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+            example: 60601fee-2bf1-4721-ae6f-7636e79a0cba
+        - name: service_name
+          in: query
+          required: false
+          schema:
+            type: string
+            example: Yandex Plus
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "07-2025"
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "12-2025"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscription'
+
+  /subscriptions/{id}:
+    get:
+      summary: Получить подписку по ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '404':
+          description: Not Found
+    put:
+      summary: Обновить подписку
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSubscriptionRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '404':
+          description: Not Found
+    delete:
+      summary: Удалить подписку
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+
+  /subscriptions/sum:
+    get:
+      summary: Агрегация стоимости подписок
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          description: Начало периода (MM-YYYY)
+          schema:
+            type: string
+            pattern: '^(0[1-9]|1[0-2])-20\d{2}$'
+        - name: end_date
+          in: query
+          required: true
+          description: Конец периода (MM-YYYY)
+          schema:
+            type: string
+            pattern: '^(0[1-9]|1[0-2])-20\d{2}$'
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: service_name
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AggregationResult'
+        '400':
+          description: Bad Request
+
+components:
+  schemas:
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        service_name:
+          type: string
+          example: Yandex Plus
+        price:
+          type: integer
+          minimum: 0
+          example: 400
+        user_id:
+          type: string
+          format: uuid
+          example: 60601fee-2bf1-4721-ae6f-7636e79a0cba
+        start_date:
+          type: string
+          pattern: '^(0[1-9]|1[0-2])-20\d{2}$'
+          example: "07-2025"
+        end_date:
+          type: string
+          nullable: true
+          pattern: '^(0[1-9]|1[0-2])-20\d{2}$'
+          example: "12-2025"
+      required:
+        - id
+        - service_name
+        - price
+        - user_id
+        - start_date
+
+    CreateSubscriptionRequest:
+      type: object
+      properties:
+        service_name:
+          type: string
+          example: Yandex Plus
+        price:
+          type: integer
+          minimum: 0
+          example: 400
+        user_id:
+          type: string
+          format: uuid
+          example: 60601fee-2bf1-4721-ae6f-7636e79a0cba
+        start_date:
+          type: string
+          pattern: '^(0[1-9]|1[0-2])-20\d{2}$'
+          example: "07-2025"
+        end_date:
+          type: string
+          nullable: true
+          pattern: '^(0[1-9]|1[0-2])-20\d{2}$'
+          example: "12-2025"
+      required:
+        - service_name
+        - price
+        - user_id
+        - start_date
+
+    UpdateSubscriptionRequest:
+      type: object
+      properties:
+        service_name:
+          type: string
+          example: Updated Service
+        price:
+          type: integer
+          minimum: 0
+          example: 500
+        start_date:
+          type: string
+          pattern: '^(0[1-9]|1[0-2])-20\d{2}$'
+          example: "08-2025"
+        end_date:
+          type: string
+          nullable: true
+          pattern: '^(0[1-9]|1[0-2])-20\d{2}$'
+          example: null
+      required:
+        - service_name
+        - price
+        - start_date
+
+    AggregationResult:
+      type: object
+      properties:
+        total_cost:
+          type: integer
+          minimum: 0
+          example: 1200
+      required:
+        - total_cost
