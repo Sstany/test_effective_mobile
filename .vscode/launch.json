@@ -9,12 +9,7 @@
             "program": "${workspaceFolder}/cmd/core/main.go",
             "env": {
                 "SERVER_PORT": ":8080",
-                "DATABASE_HOST": "localhost",
-                "DATABASE_NAME": "subscriptions_db",
-                "DATABASE_PASSWORD": "password",
-                "DATABASE_USER": "postgres",
-                "DATABASE_PORT": "5432",
-                "DATABASE_SSL_MODE": "disable",
+                "DATABASE_CONNECTION_STRING":"postgresql://postgres:password@localhost:5432/subscriptions_db?sslmode=disable",
                 "DEBUG": "true"
             },
             "args": [],
