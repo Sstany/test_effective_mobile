@@ -1,6 +1,6 @@
 package config
 
-import "embed"
+import "time"
 
 type LogLevel int8
 
@@ -15,18 +15,26 @@ const (
 )
 
 type Config struct {
-	Host              string
-	Connectionstring  string
-	Log               LogLevel
-	EmbededMigrations embed.FS
+	Address          string
+	ConnectionString string
+	Log              LogLevel
 }
 
-func New(host string, connstr string, logLevel LogLevel, migrations embed.FS) (*Config, error) {
-	return &Config{
-		Host:              host,
-		Connectionstring:  connstr,
-		Log:               logLevel,
-		EmbededMigrations: migrations,
-	}, nil
+type DatabaseConfig struct {
+	Connectionstring string
+	MaxOpenConns     int32
+	MaxLifetime      time.Duration
+	MaxIdleTime      time.Duration
+}
 
+func New(
+	address string,
+	connStr string,
+	logLevel LogLevel,
+) (*Config, error) {
+	return &Config{
+		Address:          address,
+		ConnectionString: connStr,
+		Log:              logLevel,
+	}, nil
 }

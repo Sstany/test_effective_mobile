@@ -1,7 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS subscriptions (
-        id UUID PRIMARY KEY AUTO_INCREMENT,
+        id UUID PRIMARY KEY ,
         title VARCHAR(255) NOT NULL,
         price int NOT NULL,
         user_id UUID NOT NULL,

@@ -1,0 +1,29 @@
+{
+    "go.formatTool": "goimports",
+    "gopls": {"formatting.local": "subscriptions_db"},
+    "[go]": {
+        "editor.formatOnSave": true
+    },
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "127.0.0.1",
+            "port": 5432,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "prod",
+            "database": "subscriptions_db",
+            "username": "username"
+        },
+        {
+            "previewLimit": 50,
+            "server": "127.0.0.1",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "base",
+            "database": "subscriptions_db",
+            "username": "postgres",
+            "password": "password"
+        }
+    ],
+}

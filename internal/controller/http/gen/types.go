@@ -4,6 +4,8 @@
 package gen
 
 import (
+	"time"
+
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
@@ -21,13 +23,20 @@ type CreateSubscriptionRequest struct {
 	UserId      openapi_types.UUID `json:"user_id"`
 }
 
+// ErrorResponse defines model for ErrorResponse.
+type ErrorResponse struct {
+	Errors *string `json:"errors"`
+}
+
 // Subscription defines model for Subscription.
 type Subscription struct {
+	CreatedAt   *time.Time          `json:"created_at,omitempty"`
 	EndDate     *string             `json:"end_date"`
 	Id          *openapi_types.UUID `json:"id,omitempty"`
 	Price       int                 `json:"price"`
 	ServiceName string              `json:"service_name"`
 	StartDate   string              `json:"start_date"`
+	UpdatedAt   *time.Time          `json:"updated_at,omitempty"`
 	UserId      openapi_types.UUID  `json:"user_id"`
 }
 
@@ -43,8 +52,11 @@ type UpdateSubscriptionRequest struct {
 type GetSubscriptionsParams struct {
 	UserId      *openapi_types.UUID `form:"user_id,omitempty" json:"user_id,omitempty"`
 	ServiceName *string             `form:"service_name,omitempty" json:"service_name,omitempty"`
+	Price       *int                `form:"price,omitempty" json:"price,omitempty"`
 	StartDate   *string             `form:"start_date,omitempty" json:"start_date,omitempty"`
 	EndDate     *string             `form:"end_date,omitempty" json:"end_date,omitempty"`
+	Limit       *int                `form:"limit,omitempty" json:"limit,omitempty"`
+	Offset      *int                `form:"offset,omitempty" json:"offset,omitempty"`
 }
 
 // GetSubscriptionsSumParams defines parameters for GetSubscriptionsSum.

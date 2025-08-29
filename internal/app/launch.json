@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "core",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/core/main.go",
+            "env" : {
+                "SERVER_PORT":":8080",
+                "DATABASE_HOST":"localhost",
+                "DATABASE_NAME":"subscriptions_db",
+                "DATABASE_PASSWORD":"password",
+                "DATABASE_USER":"postgres",
+                "DATABASE_PORT":"5432",
+                "JWT_SIGNING_KEY_PATH":"/Users/tatanasuksina/.ssh/test",
+                "DEBUG":"true"
+            }
+        },
+    ]
+}

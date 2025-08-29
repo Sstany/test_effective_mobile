@@ -1,13 +1,15 @@
-package usecase
+package port
 
 import (
 	"context"
 	"subscrioption-service/internal/app/entity"
 )
 
-type SubscriptionUseCase interface {
-	Create(ctx context.Context, post entity.CreateSubscriptionRequest) (*entity.Subscription, error)
-	Read(ctx context.Context, id string) (*entity.Subscription, error)
+//go:generate mockgen -destination ../adapter/repo/mock/subscription_mock.go -package repo -source ./subscription.go
+
+type SubscriptionRepo interface {
+	Create(ctx context.Context, post entity.CreateSubscriptionRequest) error
+	GetSubscription(ctx context.Context, id string) (*entity.Subscription, error)
 	Update(ctx context.Context, post entity.UpdateSubscriptionRequest) error
 	Delete(ctx context.Context, id string) error
 	List(ctx context.Context, filter entity.ListSubscriptionFilter) ([]entity.Subscription, error)

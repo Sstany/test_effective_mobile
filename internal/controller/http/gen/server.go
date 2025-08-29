@@ -110,6 +110,14 @@ func (siw *ServerInterfaceWrapper) GetSubscriptions(w http.ResponseWriter, r *ht
 		return
 	}
 
+	// ------------- Optional query parameter "price" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "price", r.URL.Query(), &params.Price)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "price", Err: err})
+		return
+	}
+
 	// ------------- Optional query parameter "start_date" -------------
 
 	err = runtime.BindQueryParameter("form", true, false, "start_date", r.URL.Query(), &params.StartDate)
@@ -123,6 +131,22 @@ func (siw *ServerInterfaceWrapper) GetSubscriptions(w http.ResponseWriter, r *ht
 	err = runtime.BindQueryParameter("form", true, false, "end_date", r.URL.Query(), &params.EndDate)
 	if err != nil {
 		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "end_date", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", r.URL.Query(), &params.Limit)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "offset" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "offset", r.URL.Query(), &params.Offset)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "offset", Err: err})
 		return
 	}
 
@@ -443,6 +467,24 @@ func (response GetSubscriptions200JSONResponse) VisitGetSubscriptionsResponse(w 
 	return json.NewEncoder(w).Encode(response)
 }
 
+type GetSubscriptions400JSONResponse ErrorResponse
+
+func (response GetSubscriptions400JSONResponse) VisitGetSubscriptionsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetSubscriptions500JSONResponse ErrorResponse
+
+func (response GetSubscriptions500JSONResponse) VisitGetSubscriptionsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
 type PostSubscriptionsRequestObject struct {
 	Body *PostSubscriptionsJSONRequestBody
 }
@@ -460,12 +502,31 @@ func (response PostSubscriptions201JSONResponse) VisitPostSubscriptionsResponse(
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostSubscriptions400Response struct {
+type PostSubscriptions400JSONResponse ErrorResponse
+
+func (response PostSubscriptions400JSONResponse) VisitPostSubscriptionsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
-func (response PostSubscriptions400Response) VisitPostSubscriptionsResponse(w http.ResponseWriter) error {
-	w.WriteHeader(400)
-	return nil
+type PostSubscriptions422JSONResponse ErrorResponse
+
+func (response PostSubscriptions422JSONResponse) VisitPostSubscriptionsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostSubscriptions500JSONResponse ErrorResponse
+
+func (response PostSubscriptions500JSONResponse) VisitPostSubscriptionsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
 type GetSubscriptionsSumRequestObject struct {
@@ -485,12 +546,22 @@ func (response GetSubscriptionsSum200JSONResponse) VisitGetSubscriptionsSumRespo
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetSubscriptionsSum400Response struct {
+type GetSubscriptionsSum400JSONResponse ErrorResponse
+
+func (response GetSubscriptionsSum400JSONResponse) VisitGetSubscriptionsSumResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
-func (response GetSubscriptionsSum400Response) VisitGetSubscriptionsSumResponse(w http.ResponseWriter) error {
-	w.WriteHeader(400)
-	return nil
+type GetSubscriptionsSum500JSONResponse ErrorResponse
+
+func (response GetSubscriptionsSum500JSONResponse) VisitGetSubscriptionsSumResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
 type DeleteSubscriptionsIdRequestObject struct {
@@ -509,12 +580,31 @@ func (response DeleteSubscriptionsId204Response) VisitDeleteSubscriptionsIdRespo
 	return nil
 }
 
-type DeleteSubscriptionsId404Response struct {
+type DeleteSubscriptionsId400JSONResponse ErrorResponse
+
+func (response DeleteSubscriptionsId400JSONResponse) VisitDeleteSubscriptionsIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
-func (response DeleteSubscriptionsId404Response) VisitDeleteSubscriptionsIdResponse(w http.ResponseWriter) error {
+type DeleteSubscriptionsId404JSONResponse ErrorResponse
+
+func (response DeleteSubscriptionsId404JSONResponse) VisitDeleteSubscriptionsIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
-	return nil
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteSubscriptionsId500JSONResponse ErrorResponse
+
+func (response DeleteSubscriptionsId500JSONResponse) VisitDeleteSubscriptionsIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
 type GetSubscriptionsIdRequestObject struct {
@@ -534,12 +624,31 @@ func (response GetSubscriptionsId200JSONResponse) VisitGetSubscriptionsIdRespons
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetSubscriptionsId404Response struct {
+type GetSubscriptionsId400JSONResponse ErrorResponse
+
+func (response GetSubscriptionsId400JSONResponse) VisitGetSubscriptionsIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
-func (response GetSubscriptionsId404Response) VisitGetSubscriptionsIdResponse(w http.ResponseWriter) error {
+type GetSubscriptionsId404JSONResponse ErrorResponse
+
+func (response GetSubscriptionsId404JSONResponse) VisitGetSubscriptionsIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
-	return nil
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetSubscriptionsId500JSONResponse ErrorResponse
+
+func (response GetSubscriptionsId500JSONResponse) VisitGetSubscriptionsIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
 type PutSubscriptionsIdRequestObject struct {
@@ -560,12 +669,40 @@ func (response PutSubscriptionsId200JSONResponse) VisitPutSubscriptionsIdRespons
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PutSubscriptionsId404Response struct {
+type PutSubscriptionsId400JSONResponse ErrorResponse
+
+func (response PutSubscriptionsId400JSONResponse) VisitPutSubscriptionsIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
-func (response PutSubscriptionsId404Response) VisitPutSubscriptionsIdResponse(w http.ResponseWriter) error {
+type PutSubscriptionsId404JSONResponse ErrorResponse
+
+func (response PutSubscriptionsId404JSONResponse) VisitPutSubscriptionsIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
-	return nil
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PutSubscriptionsId422JSONResponse ErrorResponse
+
+func (response PutSubscriptionsId422JSONResponse) VisitPutSubscriptionsIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PutSubscriptionsId500JSONResponse ErrorResponse
+
+func (response PutSubscriptionsId500JSONResponse) VisitPutSubscriptionsIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
 // StrictServerInterface represents all server handlers.

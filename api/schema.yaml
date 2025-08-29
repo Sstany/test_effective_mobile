@@ -22,9 +22,32 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Subscription'
+                $ref: '#/components/schemas/Subscription'  
         '400':
-          description: Bad Request
+          description: |
+            Bad Request. Возможные причины:
+            - Невалидный формат UUID
+            - Невалидный формат даты (MM-YYYY)
+            - Отрицательная цена
+            - Отсутствуют обязательные поля
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: |
+            Unprocessable Entity. Возможные причины:
+            - Дата окончания раньше даты начала
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     get:
       summary: Список подписок
       parameters:
@@ -41,6 +64,12 @@ paths:
           schema:
             type: string
             example: Yandex Plus
+        - name: price
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 500
         - name: start_date
           in: query
           required: false
@@ -53,6 +82,18 @@ paths:
           schema:
             type: string
             example: "12-2025"
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 10
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 0
       responses:
         '200':
           description: OK
@@ -61,7 +102,23 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Subscription'
+                  $ref: '#/components/schemas/Subscription'  
+        '400':
+          description: |
+            Bad Request. Возможные причины:
+            - Невалидный формат UUID в параметрах
+            - Невалидный формат даты в параметрах
+            - Отрицательные значения limit/offset
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /subscriptions/{id}:
     get:
@@ -79,9 +136,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Subscription'
+                $ref: '#/components/schemas/Subscription' 
+        '400':
+          description: |
+            Bad Request. Возможные причины:
+            - Невалидный формат UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       summary: Обновить подписку
       parameters:
@@ -103,9 +178,38 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Subscription'
+                $ref: '#/components/schemas/Subscription'  
+        '400':
+          description: |
+            Bad Request. Возможные причины:
+            - Невалидный формат UUID
+            - Невалидный формат даты
+            - Отрицательная цена
+            - Отсутствуют обязательные поля
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: |
+            Unprocessable Entity. Возможные причины:
+            - Дата окончания раньше даты начала
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       summary: Удалить подписку
       parameters:
@@ -117,9 +221,27 @@ paths:
             format: uuid
       responses:
         '204':
-          description: No Content
+          description: No Content  
+        '400':
+          description: |
+            Bad Request. Возможные причины:
+            - Невалидный формат UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /subscriptions/sum:
     get:
@@ -156,9 +278,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AggregationResult'
+                $ref: '#/components/schemas/AggregationResult'  
         '400':
-          description: Bad Request
+          description: |
+            Bad Request. Возможные причины:
+            - Невалидный формат даты
+            - Невалидный формат UUID
+            - Дата начала позже даты окончания
+            - Отсутствуют обязательные параметры периода
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   schemas:
@@ -189,12 +326,24 @@ components:
           nullable: true
           pattern: '^(0[1-9]|1[0-2])-20\d{2}$'
           example: "12-2025"
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          example: "2025-07-15T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          example: "2025-07-15T10:30:00Z"
       required:
         - id
         - service_name
         - price
         - user_id
         - start_date
+        - created_at
+        - updated_at
 
     CreateSubscriptionRequest:
       type: object
@@ -258,3 +407,13 @@ components:
           example: 1200
       required:
         - total_cost
+
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: string
+          nullable: true
+          example: "Invalid request parameters"
+      required:
+        - errors
