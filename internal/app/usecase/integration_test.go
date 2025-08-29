@@ -182,10 +182,14 @@ func TestUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, nil, logger)
+	transactionController := repo.NewMockTransactionController(ctrl)
+
+	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, transactionController, logger)
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	mockTransaction := repo.NewMockTransaction(ctrl)
 
 	updateRequest := entity.UpdateSubscriptionRequest{
 		ID:    uuid.NewString(),
@@ -196,6 +200,8 @@ func TestUpdate(t *testing.T) {
 	ctx := context.Background()
 
 	subscriptionRepo.EXPECT().Update(ctx, updateRequest).Return(nil)
+	transactionController.EXPECT().BeginTx(ctx, entity.RepeatableRead).Return(mockTransaction, nil).Times(1)
+	mockTransaction.EXPECT().Commit(ctx).Return(nil).Times(1)
 
 	err = subscriptionUsecase.Update(ctx, updateRequest)
 	if err != nil {
