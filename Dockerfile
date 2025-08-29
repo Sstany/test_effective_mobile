@@ -1,4 +1,4 @@
-FROM golang:1.25 AS builder
+FROM golang:1.25-alpine AS builder
 
 
 WORKDIR /app
@@ -17,6 +17,7 @@ FROM alpine
 WORKDIR /app
 
 COPY --from=builder /app/core /app/core
+COPY .env .env
 
 EXPOSE 8080
 

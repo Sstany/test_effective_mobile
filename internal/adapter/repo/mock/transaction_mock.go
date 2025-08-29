@@ -7,11 +7,10 @@ package repo
 import (
 	context "context"
 	reflect "reflect"
+	entity "subscription-service/internal/app/entity"
 	port "subscription-service/internal/port"
 
 	gomock "github.com/golang/mock/gomock"
-	pgx "github.com/jackc/pgx/v5"
-	pgconn "github.com/jackc/pgx/v5/pgconn"
 )
 
 // MockTransactionController is a mock of TransactionController interface.
@@ -38,18 +37,18 @@ func (m *MockTransactionController) EXPECT() *MockTransactionControllerMockRecor
 }
 
 // BeginTx mocks base method.
-func (m *MockTransactionController) BeginTx(ctx context.Context) (port.Transaction, error) {
+func (m *MockTransactionController) BeginTx(ctx context.Context, isoLvl entity.IsolationLevel) (port.Transaction, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "BeginTx", ctx)
+	ret := m.ctrl.Call(m, "BeginTx", ctx, isoLvl)
 	ret0, _ := ret[0].(port.Transaction)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // BeginTx indicates an expected call of BeginTx.
-func (mr *MockTransactionControllerMockRecorder) BeginTx(ctx interface{}) *gomock.Call {
+func (mr *MockTransactionControllerMockRecorder) BeginTx(ctx, isoLvl interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BeginTx", reflect.TypeOf((*MockTransactionController)(nil).BeginTx), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BeginTx", reflect.TypeOf((*MockTransactionController)(nil).BeginTx), ctx, isoLvl)
 }
 
 // MockTransaction is a mock of Transaction interface.
@@ -87,65 +86,6 @@ func (m *MockTransaction) Commit(ctx context.Context) error {
 func (mr *MockTransactionMockRecorder) Commit(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Commit", reflect.TypeOf((*MockTransaction)(nil).Commit), ctx)
-}
-
-// Exec mocks base method.
-func (m *MockTransaction) Exec(ctx context.Context, query string, args ...any) (pgconn.CommandTag, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, query}
-	for _, a := range args {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "Exec", varargs...)
-	ret0, _ := ret[0].(pgconn.CommandTag)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Exec indicates an expected call of Exec.
-func (mr *MockTransactionMockRecorder) Exec(ctx, query interface{}, args ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, query}, args...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exec", reflect.TypeOf((*MockTransaction)(nil).Exec), varargs...)
-}
-
-// Query mocks base method.
-func (m *MockTransaction) Query(ctx context.Context, query string, args ...any) (pgx.Rows, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, query}
-	for _, a := range args {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "Query", varargs...)
-	ret0, _ := ret[0].(pgx.Rows)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Query indicates an expected call of Query.
-func (mr *MockTransactionMockRecorder) Query(ctx, query interface{}, args ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, query}, args...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Query", reflect.TypeOf((*MockTransaction)(nil).Query), varargs...)
-}
-
-// QueryRow mocks base method.
-func (m *MockTransaction) QueryRow(ctx context.Context, query string, args ...any) pgx.Row {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, query}
-	for _, a := range args {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "QueryRow", varargs...)
-	ret0, _ := ret[0].(pgx.Row)
-	return ret0
-}
-
-// QueryRow indicates an expected call of QueryRow.
-func (mr *MockTransactionMockRecorder) QueryRow(ctx, query interface{}, args ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, query}, args...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueryRow", reflect.TypeOf((*MockTransaction)(nil).QueryRow), varargs...)
 }
 
 // Rollback mocks base method.

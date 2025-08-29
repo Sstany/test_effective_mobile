@@ -13,7 +13,7 @@ import (
 )
 
 func NewPostgresPool(ctx context.Context, cfg config.DatabaseConfig) (*pgxpool.Pool, error) {
-	db, err := sql.Open("pgx", cfg.Connectionstring)
+	db, err := sql.Open("pgx", cfg.ConnectionString)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
@@ -26,7 +26,7 @@ func NewPostgresPool(ctx context.Context, cfg config.DatabaseConfig) (*pgxpool.P
 		return nil, fmt.Errorf("failed to close database: %w", err)
 	}
 
-	pgxConfig, err := pgxpool.ParseConfig(cfg.Connectionstring)
+	pgxConfig, err := pgxpool.ParseConfig(cfg.ConnectionString)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse pgx config: %w", err)
 	}

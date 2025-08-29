@@ -16,7 +16,7 @@ import (
 
 const (
 	MaxOpenConns = 25
-	MaxIdleTime  = 10
+	MaxIdleTime  = 10 * time.Minute
 	MaxLifetime  = 5 * time.Minute
 )
 
@@ -29,22 +29,15 @@ func Run(cfg *config.Config) {
 		panic(err)
 	}
 
-	logger.Info("start")
+	logger.Info("start service")
 
 	defer func() {
 		if lErr := logger.Sync(); lErr != nil {
-			panic(err)
+			panic(lErr)
 		}
 	}()
 
-	dbCfg := config.DatabaseConfig{
-		Connectionstring: cfg.ConnectionString,
-		MaxOpenConns:     MaxOpenConns,
-		MaxIdleTime:      MaxIdleTime,
-		MaxLifetime:      MaxLifetime,
-	}
-
-	pool, err := db.NewPostgresPool(context.Background(), dbCfg)
+	pool, err := db.NewPostgresPool(context.Background(), cfg.DBConfig)
 	if err != nil {
 		panic(err)
 	}

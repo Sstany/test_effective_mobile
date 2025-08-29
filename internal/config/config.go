@@ -15,13 +15,13 @@ const (
 )
 
 type Config struct {
-	Address          string
-	ConnectionString string
-	Log              LogLevel
+	Address  string
+	Log      LogLevel
+	DBConfig DatabaseConfig
 }
 
 type DatabaseConfig struct {
-	Connectionstring string
+	ConnectionString string
 	MaxOpenConns     int32
 	MaxLifetime      time.Duration
 	MaxIdleTime      time.Duration
@@ -31,10 +31,18 @@ func New(
 	address string,
 	connStr string,
 	logLevel LogLevel,
+	maxOpenConns int32,
+	maxLifeTime time.Duration,
+	maxIdleTime time.Duration,
 ) (*Config, error) {
 	return &Config{
-		Address:          address,
-		ConnectionString: connStr,
-		Log:              logLevel,
+		Address: address,
+		Log:     logLevel,
+		DBConfig: DatabaseConfig{
+			ConnectionString: connStr,
+			MaxOpenConns:     maxOpenConns,
+			MaxLifetime:      maxLifeTime,
+			MaxIdleTime:      maxIdleTime,
+		},
 	}, nil
 }

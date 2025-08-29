@@ -1,6 +1,7 @@
 
 services:
   app:
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile
@@ -8,11 +9,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=yourpassword
-      - DB_NAME=subscriptions_db
+      DATABASE_CONNECTION_STRING: postgresql://postgres:password@db:5432/subscriptions_db?sslmode=disable
     depends_on:
       db:
           condition: service_healthy
@@ -32,9 +29,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
-    networks:
-      - internal
-networks:
-  internal:
+
 volumes:
-  subscrition_service:
+  db:
