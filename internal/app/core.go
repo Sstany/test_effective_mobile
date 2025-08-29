@@ -2,17 +2,16 @@ package app
 
 import (
 	"context"
-
-	"subscrioption-service/internal/adapter/db"
-	"subscrioption-service/internal/adapter/repo"
-	"subscrioption-service/internal/app/usecase"
-	"subscrioption-service/internal/config"
-	handler "subscrioption-service/internal/controller/http"
-
 	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
+	"subscription-service/internal/adapter/db"
+	"subscription-service/internal/adapter/repo"
+	"subscription-service/internal/app/usecase"
+	"subscription-service/internal/config"
+	handler "subscription-service/internal/controller/http"
 )
 
 const (
@@ -55,7 +54,9 @@ func Run(cfg *config.Config) {
 		panic(err)
 	}
 
-	subUsecase, err := usecase.NewSubscription(subRepo, pool, logger.Named("subscription-usecase"))
+	transactionController := repo.NewTransactionSQL(pool, logger.Named("transaction-ctrl"))
+
+	subUsecase, err := usecase.NewSubscription(subRepo, transactionController, logger.Named("subscription-usecase"))
 	if err != nil {
 		panic(err)
 	}

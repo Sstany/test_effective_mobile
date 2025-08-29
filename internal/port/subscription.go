@@ -2,7 +2,8 @@ package port
 
 import (
 	"context"
-	"subscrioption-service/internal/app/entity"
+
+	"subscription-service/internal/app/entity"
 )
 
 //go:generate mockgen -destination ../adapter/repo/mock/subscription_mock.go -package repo -source ./subscription.go

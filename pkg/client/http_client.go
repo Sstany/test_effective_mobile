@@ -789,7 +789,6 @@ func (r GetSubscriptionsIdResponse) StatusCode() int {
 type PutSubscriptionsIdResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Subscription
 	JSON400      *ErrorResponse
 	JSON404      *ErrorResponse
 	JSON422      *ErrorResponse
@@ -1110,13 +1109,6 @@ func ParsePutSubscriptionsIdResponse(rsp *http.Response) (*PutSubscriptionsIdRes
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Subscription
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
 		var dest ErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {

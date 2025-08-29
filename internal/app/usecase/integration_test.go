@@ -8,13 +8,12 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
 
-	repo "subscrioption-service/internal/adapter/repo/mock"
-	"subscrioption-service/internal/app/entity"
-	"subscrioption-service/internal/app/usecase"
-	pkg "subscrioption-service/internal/pkg/utils"
+	repo "subscription-service/internal/adapter/repo/mock"
+	"subscription-service/internal/app/entity"
+	"subscription-service/internal/app/usecase"
+	pkg "subscription-service/internal/pkg/utils"
 )
 
 func TestCreate(t *testing.T) {
@@ -22,13 +21,13 @@ func TestCreate(t *testing.T) {
 	defer ctrl.Finish()
 
 	subscriptionRepo := repo.NewMockSubscriptionRepo(ctrl)
-	pool := &pgxpool.Pool{}
+
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, pool, logger)
+	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, nil, logger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,13 +72,13 @@ func TestCreateWithRepoError(t *testing.T) {
 	defer ctrl.Finish()
 
 	subscriptionRepo := repo.NewMockSubscriptionRepo(ctrl)
-	pool := &pgxpool.Pool{}
+
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, pool, logger)
+	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, nil, logger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -110,13 +109,13 @@ func TestRead(t *testing.T) {
 	defer ctrl.Finish()
 
 	subscriptionRepo := repo.NewMockSubscriptionRepo(ctrl)
-	pool := &pgxpool.Pool{}
+
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, pool, logger)
+	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, nil, logger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -148,13 +147,13 @@ func TestReadWithNotFound(t *testing.T) {
 	defer ctrl.Finish()
 
 	subscriptionRepo := repo.NewMockSubscriptionRepo(ctrl)
-	pool := &pgxpool.Pool{}
+
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, pool, logger)
+	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, nil, logger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -177,13 +176,13 @@ func TestUpdate(t *testing.T) {
 	defer ctrl.Finish()
 
 	subscriptionRepo := repo.NewMockSubscriptionRepo(ctrl)
-	pool := &pgxpool.Pool{}
+
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, pool, logger)
+	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, nil, logger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -209,13 +208,13 @@ func TestDelete(t *testing.T) {
 	defer ctrl.Finish()
 
 	subscriptionRepo := repo.NewMockSubscriptionRepo(ctrl)
-	pool := &pgxpool.Pool{}
+
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, pool, logger)
+	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, nil, logger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -237,13 +236,13 @@ func TestDeleteWithRepoError(t *testing.T) {
 	defer ctrl.Finish()
 
 	subscriptionRepo := repo.NewMockSubscriptionRepo(ctrl)
-	pool := &pgxpool.Pool{}
+
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, pool, logger)
+	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, nil, logger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -266,13 +265,13 @@ func TestList(t *testing.T) {
 	defer ctrl.Finish()
 
 	subscriptionRepo := repo.NewMockSubscriptionRepo(ctrl)
-	pool := &pgxpool.Pool{}
+
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, pool, logger)
+	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, nil, logger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -317,13 +316,13 @@ func TestListWithEmptyResult(t *testing.T) {
 	defer ctrl.Finish()
 
 	subscriptionRepo := repo.NewMockSubscriptionRepo(ctrl)
-	pool := &pgxpool.Pool{}
+
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, pool, logger)
+	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, nil, logger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -353,13 +352,13 @@ func TestSum(t *testing.T) {
 	defer ctrl.Finish()
 
 	subscriptionRepo := repo.NewMockSubscriptionRepo(ctrl)
-	pool := &pgxpool.Pool{}
+
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, pool, logger)
+	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, nil, logger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -389,13 +388,13 @@ func TestSumWithZeroResult(t *testing.T) {
 	defer ctrl.Finish()
 
 	subscriptionRepo := repo.NewMockSubscriptionRepo(ctrl)
-	pool := &pgxpool.Pool{}
+
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, pool, logger)
+	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, nil, logger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -423,13 +422,13 @@ func TestSumWithRepoError(t *testing.T) {
 	defer ctrl.Finish()
 
 	subscriptionRepo := repo.NewMockSubscriptionRepo(ctrl)
-	pool := &pgxpool.Pool{}
+
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, pool, logger)
+	subscriptionUsecase, err := usecase.NewSubscription(subscriptionRepo, nil, logger)
 	if err != nil {
 		t.Fatal(err)
 	}

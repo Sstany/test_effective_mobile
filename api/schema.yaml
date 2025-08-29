@@ -22,22 +22,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Subscription'  
+                $ref: '#/components/schemas/Subscription'
         '400':
-          description: |
-            Bad Request. Возможные причины:
-            - Невалидный формат UUID
-            - Невалидный формат даты (MM-YYYY)
-            - Отрицательная цена
-            - Отсутствуют обязательные поля
+          description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
-          description: |
-            Unprocessable Entity. Возможные причины:
-            - Дата окончания раньше даты начала
+          description: Unprocessable Entity
           content:
             application/json:
               schema:
@@ -57,42 +50,54 @@ paths:
           schema:
             type: string
             format: uuid
+            pattern: '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
             example: 60601fee-2bf1-4721-ae6f-7636e79a0cba
         - name: service_name
           in: query
           required: false
           schema:
             type: string
+            pattern: '^[a-zA-Z0-9а-яА-ЯёЁ\\s\\-\\+]+$'
+            minLength: 1
+            maxLength: 255
             example: Yandex Plus
         - name: price
           in: query
           required: false
           schema:
             type: integer
+            minimum: 0
+            maximum: 1000000
             example: 500
         - name: start_date
           in: query
           required: false
           schema:
             type: string
+            pattern: '^(0[1-9]|1[0-2])-20\d{2}$'
             example: "07-2025"
         - name: end_date
           in: query
           required: false
           schema:
             type: string
+            pattern: '^(0[1-9]|1[0-2])-20\d{2}$'
             example: "12-2025"
         - name: limit
           in: query
           required: false
           schema:
             type: integer
+            minimum: 1
+            maximum: 1000
             example: 10
         - name: offset
           in: query
           required: false
           schema:
             type: integer
+            minimum: 0
+            maximum: 10000
             example: 0
       responses:
         '200':
@@ -102,13 +107,9 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Subscription'  
+                  $ref: '#/components/schemas/Subscription'
         '400':
-          description: |
-            Bad Request. Возможные причины:
-            - Невалидный формат UUID в параметрах
-            - Невалидный формат даты в параметрах
-            - Отрицательные значения limit/offset
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -130,17 +131,16 @@ paths:
           schema:
             type: string
             format: uuid
+            pattern: '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Subscription' 
+                $ref: '#/components/schemas/Subscription'
         '400':
-          description: |
-            Bad Request. Возможные причины:
-            - Невалидный формат UUID
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -166,6 +166,7 @@ paths:
           schema:
             type: string
             format: uuid
+            pattern: '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
       requestBody:
         required: true
         content:
@@ -173,19 +174,10 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateSubscriptionRequest'
       responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Subscription'  
+        '204':
+          description: Updated
         '400':
-          description: |
-            Bad Request. Возможные причины:
-            - Невалидный формат UUID
-            - Невалидный формат даты
-            - Отрицательная цена
-            - Отсутствуют обязательные поля
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -197,9 +189,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
-          description: |
-            Unprocessable Entity. Возможные причины:
-            - Дата окончания раньше даты начала
+          description: Unprocessable Entity
           content:
             application/json:
               schema:
@@ -211,7 +201,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     delete:
-      summary: Удалить подписку
+      summary: Уд.лить подписку
       parameters:
         - name: id
           in: path
@@ -219,13 +209,12 @@ paths:
           schema:
             type: string
             format: uuid
+            pattern: '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
       responses:
         '204':
-          description: No Content  
+          description: No Content
         '400':
-          description: |
-            Bad Request. Возможные причины:
-            - Невалидный формат UUID
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -250,14 +239,12 @@ paths:
         - name: start_date
           in: query
           required: true
-          description: Начало периода (MM-YYYY)
           schema:
             type: string
             pattern: '^(0[1-9]|1[0-2])-20\d{2}$'
         - name: end_date
           in: query
           required: true
-          description: Конец периода (MM-YYYY)
           schema:
             type: string
             pattern: '^(0[1-9]|1[0-2])-20\d{2}$'
@@ -267,25 +254,24 @@ paths:
           schema:
             type: string
             format: uuid
+            pattern: '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
         - name: service_name
           in: query
           required: false
           schema:
             type: string
+            pattern: '^[a-zA-Z0-9а-яА-ЯёЁ\\s\\-\\+]+$'
+            minLength: 1
+            maxLength: 255
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AggregationResult'  
+                $ref: '#/components/schemas/AggregationResult'
         '400':
-          description: |
-            Bad Request. Возможные причины:
-            - Невалидный формат даты
-            - Невалидный формат UUID
-            - Дата начала позже даты окончания
-            - Отсутствуют обязательные параметры периода
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -414,6 +400,6 @@ components:
         errors:
           type: string
           nullable: true
-          example: "Invalid request parameters"
+          example: "Validation failed: start_date has invalid format"
       required:
         - errors

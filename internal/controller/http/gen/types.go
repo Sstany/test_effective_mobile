@@ -61,10 +61,7 @@ type GetSubscriptionsParams struct {
 
 // GetSubscriptionsSumParams defines parameters for GetSubscriptionsSum.
 type GetSubscriptionsSumParams struct {
-	// StartDate Начало периода (MM-YYYY)
-	StartDate string `form:"start_date" json:"start_date"`
-
-	// EndDate Конец периода (MM-YYYY)
+	StartDate   string              `form:"start_date" json:"start_date"`
 	EndDate     string              `form:"end_date" json:"end_date"`
 	UserId      *openapi_types.UUID `form:"user_id,omitempty" json:"user_id,omitempty"`
 	ServiceName *string             `form:"service_name,omitempty" json:"service_name,omitempty"`

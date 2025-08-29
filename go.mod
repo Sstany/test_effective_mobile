@@ -1,8 +1,9 @@
-module subscrioption-service
+module subscription-service
 
 go 1.25.0
 
 require (
+	github.com/cenkalti/backoff/v4 v4.3.0
 	github.com/getkin/kin-openapi v0.132.0
 	github.com/go-chi/chi v1.5.5
 	github.com/go-chi/chi/v5 v5.2.2

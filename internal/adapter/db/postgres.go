@@ -4,12 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"subscrioption-service/internal/config"
-	"subscrioption-service/internal/migrations"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-
 	_ "github.com/jackc/pgx/v5/stdlib"
+
+	"subscription-service/internal/config"
+	"subscription-service/internal/migrations"
 )
 
 func NewPostgresPool(ctx context.Context, cfg config.DatabaseConfig) (*pgxpool.Pool, error) {

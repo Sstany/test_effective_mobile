@@ -1,6 +1,6 @@
 {
     "go.formatTool": "goimports",
-    "gopls": {"formatting.local": "subscriptions_db"},
+    "gopls": {"formatting.local": "subscription-service"},
     "[go]": {
         "editor.formatOnSave": true
     },

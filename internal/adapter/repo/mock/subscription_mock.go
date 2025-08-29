@@ -7,7 +7,7 @@ package repo
 import (
 	context "context"
 	reflect "reflect"
-	entity "subscrioption-service/internal/app/entity"
+	entity "subscription-service/internal/app/entity"
 
 	gomock "github.com/golang/mock/gomock"
 )

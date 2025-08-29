@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"subscrioption-service/internal/app"
-	"subscrioption-service/internal/config"
+	"subscription-service/internal/app"
+	"subscription-service/internal/config"
 )
 
 func main() {

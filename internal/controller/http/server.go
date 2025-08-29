@@ -3,18 +3,19 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
-	"subscrioption-service/internal/app/entity"
-	"subscrioption-service/internal/app/usecase"
-	"subscrioption-service/internal/controller/http/gen"
-	pkg "subscrioption-service/internal/pkg/utils"
-
 	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
+
+	"subscription-service/internal/app/entity"
+	"subscription-service/internal/app/usecase"
+	"subscription-service/internal/controller/http/gen"
+	pkg "subscription-service/internal/pkg/utils"
 )
 
 var _ gen.StrictServerInterface = (*Server)(nil)
@@ -63,14 +64,20 @@ func (r *Server) GetSubscriptions(
 
 	t_s, err := time.Parse("01-2006", *request.Params.StartDate)
 	if err != nil {
-		panic(err)
+		if errors.Is(err, &time.ParseError{}) {
+			return gen.GetSubscriptions400JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
+		}
+		return gen.GetSubscriptions500JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 	}
 
 	startDateWithDay := time.Date(t_s.Year(), t_s.Month(), 1, 0, 0, 0, 0, time.UTC)
 
 	t_e, err := time.Parse("01-2006", *request.Params.EndDate)
 	if err != nil {
-		panic(err)
+		if errors.Is(err, &time.ParseError{}) {
+			return gen.GetSubscriptions400JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
+		}
+		return gen.GetSubscriptions500JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 	}
 
 	endDateWithDay := time.Date(t_e.Year(), t_e.Month(), 1, 0, 0, 0, 0, time.UTC)
@@ -83,7 +90,7 @@ func (r *Server) GetSubscriptions(
 
 	subs, err := r.subUsecase.List(ctx, *filter)
 	if err != nil {
-		return nil, err
+		return gen.GetSubscriptions500JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 	}
 
 	resp := make([]gen.Subscription, len(subs))
@@ -115,14 +122,20 @@ func (r *Server) PostSubscriptions(
 
 	t_s, err := time.Parse("01-2006", request.Body.StartDate)
 	if err != nil {
-		panic(err)
+		if errors.Is(err, &time.ParseError{}) {
+			return gen.PostSubscriptions400JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
+		}
+		return gen.PostSubscriptions500JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 	}
 
 	startDateWithDay := time.Date(t_s.Year(), t_s.Month(), 1, 0, 0, 0, 0, time.UTC)
 
 	t_e, err := time.Parse("01-2006", *request.Body.EndDate)
 	if err != nil {
-		panic(err)
+		if errors.Is(err, &time.ParseError{}) {
+			return gen.PostSubscriptions400JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
+		}
+		return gen.PostSubscriptions500JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 	}
 
 	endDateWithDay := time.Date(t_e.Year(), t_e.Month(), 1, 0, 0, 0, 0, time.UTC)
@@ -134,7 +147,10 @@ func (r *Server) PostSubscriptions(
 
 	s, err := r.subUsecase.Create(ctx, *filter)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, usecase.ErrSubscriptionAlreadyExists) {
+			return gen.PostSubscriptions400JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
+		}
+		return gen.PostSubscriptions500JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 	}
 	created := time.UnixMilli(s.CreatedAt)
 	updated := time.UnixMilli(s.UpdatedAt)
@@ -169,14 +185,20 @@ func (r *Server) GetSubscriptionsSum(
 
 	t_s, err := time.Parse("01-2006", request.Params.StartDate)
 	if err != nil {
-		panic(err)
+		if errors.Is(err, &time.ParseError{}) {
+			return gen.GetSubscriptionsSum400JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
+		}
+		return gen.GetSubscriptionsSum500JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 	}
 
 	startDateWithDay := time.Date(t_s.Year(), t_s.Month(), 1, 0, 0, 0, 0, time.UTC)
 
 	t_e, err := time.Parse("01-2006", request.Params.EndDate)
 	if err != nil {
-		panic(err)
+		if errors.Is(err, &time.ParseError{}) {
+			return gen.GetSubscriptionsSum400JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
+		}
+		return gen.GetSubscriptionsSum500JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 	}
 
 	endDateWithDay := time.Date(t_e.Year(), t_e.Month(), 1, 0, 0, 0, 0, time.UTC)
@@ -186,18 +208,20 @@ func (r *Server) GetSubscriptionsSum(
 
 	sum, err := r.subUsecase.Sum(ctx, *filter)
 	if err != nil {
-		return nil, err
+		return gen.GetSubscriptionsSum500JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 	}
+
 	return gen.GetSubscriptionsSum200JSONResponse(gen.AggregationResult{TotalCost: int(sum)}), nil
 }
 
-func (r *Server) DeleteSubscriptionsId(
-	ctx context.Context,
-	request gen.DeleteSubscriptionsIdRequestObject,
-) (gen.DeleteSubscriptionsIdResponseObject, error) {
+func (r *Server) DeleteSubscriptionsId(ctx context.Context, request gen.DeleteSubscriptionsIdRequestObject) (gen.DeleteSubscriptionsIdResponseObject, error) {
 	err := r.subUsecase.Delete(ctx, request.Id.String())
 	if err != nil {
-		return nil, err
+		r.logger.Error("subscription not found")
+		if errors.Is(err, usecase.ErrNotFound) {
+			return gen.DeleteSubscriptionsId404JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
+		}
+		return gen.DeleteSubscriptionsId500JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 	}
 	return gen.DeleteSubscriptionsId204Response{}, nil
 }
@@ -208,7 +232,9 @@ func (r *Server) GetSubscriptionsId(
 ) (gen.GetSubscriptionsIdResponseObject, error) {
 	sub, err := r.subUsecase.Read(ctx, request.Id.String())
 	if err != nil {
-		return nil, err
+		if errors.Is(err, usecase.ErrNotFound) {
+			return gen.GetSubscriptionsId404JSONResponse{}, nil
+		}
 	}
 
 	userID := pkg.UUID(sub.UserID)
@@ -238,13 +264,18 @@ func (r *Server) PutSubscriptionsId(
 	sub.Price = price
 	t_s, err := time.Parse("01-2006", request.Body.StartDate)
 	if err != nil {
-		panic(err)
+		if errors.Is(err, &time.ParseError{}) {
+			return gen.PutSubscriptionsId400JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
+		}
+		return gen.PutSubscriptionsId400JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 	}
 	sub.StartDate = time.Date(t_s.Year(), t_s.Month(), 1, 0, 0, 0, 0, time.UTC)
 	if request.Body.EndDate != nil {
 		t_e, err := time.Parse("01-2006", *request.Body.EndDate)
 		if err != nil {
-			panic(err)
+			if errors.Is(err, usecase.ErrInvalidSubscriptionData) {
+				return gen.PutSubscriptionsId404JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
+			}
 		}
 		endDateWithDay := time.Date(t_e.Year(), t_e.Month(), 1,
 			0, 0, 0, 0, time.UTC)
@@ -256,10 +287,15 @@ func (r *Server) PutSubscriptionsId(
 
 	err = r.subUsecase.Update(ctx, *sub)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, usecase.ErrSubscriptionAlreadyExists) {
+			return gen.PutSubscriptionsId400JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
+		}
+		if errors.Is(err, usecase.ErrNotFound) {
+			return gen.PutSubscriptionsId404JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
+		}
 	}
 
-	return gen.PutSubscriptionsId200JSONResponse{}, nil
+	return gen.PutSubscriptionsId204Response{}, nil
 }
 
 func requestErrorHandler(w http.ResponseWriter, r *http.Request, err error) {

@@ -26,7 +26,7 @@ type ServerInterface interface {
 	// Агрегация стоимости подписок
 	// (GET /subscriptions/sum)
 	GetSubscriptionsSum(w http.ResponseWriter, r *http.Request, params GetSubscriptionsSumParams)
-	// Удалить подписку
+	// Уд.лить подписку
 	// (DELETE /subscriptions/{id})
 	DeleteSubscriptionsId(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
 	// Получить подписку по ID
@@ -59,7 +59,7 @@ func (_ Unimplemented) GetSubscriptionsSum(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Удалить подписку
+// Уд.лить подписку
 // (DELETE /subscriptions/{id})
 func (_ Unimplemented) DeleteSubscriptionsId(w http.ResponseWriter, r *http.Request, id openapi_types.UUID) {
 	w.WriteHeader(http.StatusNotImplemented)
@@ -660,13 +660,12 @@ type PutSubscriptionsIdResponseObject interface {
 	VisitPutSubscriptionsIdResponse(w http.ResponseWriter) error
 }
 
-type PutSubscriptionsId200JSONResponse Subscription
+type PutSubscriptionsId204Response struct {
+}
 
-func (response PutSubscriptionsId200JSONResponse) VisitPutSubscriptionsIdResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
+func (response PutSubscriptionsId204Response) VisitPutSubscriptionsIdResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
 }
 
 type PutSubscriptionsId400JSONResponse ErrorResponse
@@ -716,7 +715,7 @@ type StrictServerInterface interface {
 	// Агрегация стоимости подписок
 	// (GET /subscriptions/sum)
 	GetSubscriptionsSum(ctx context.Context, request GetSubscriptionsSumRequestObject) (GetSubscriptionsSumResponseObject, error)
-	// Удалить подписку
+	// Уд.лить подписку
 	// (DELETE /subscriptions/{id})
 	DeleteSubscriptionsId(ctx context.Context, request DeleteSubscriptionsIdRequestObject) (DeleteSubscriptionsIdResponseObject, error)
 	// Получить подписку по ID

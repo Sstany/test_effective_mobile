@@ -2,7 +2,8 @@ package usecase
 
 import (
 	"context"
-	"subscrioption-service/internal/app/entity"
+
+	"subscription-service/internal/app/entity"
 )
 
 type SubscriptionUseCase interface {

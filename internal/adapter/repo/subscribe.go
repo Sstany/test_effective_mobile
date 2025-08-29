@@ -4,13 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"log"
-	"subscrioption-service/internal/app/entity"
-	"subscrioption-service/internal/port"
 
 	"github.com/huandu/go-sqlbuilder"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
+
+	"subscription-service/internal/app/entity"
+	"subscription-service/internal/port"
 )
 
 var _ port.SubscriptionRepo = (*Subscription)(nil)
@@ -66,7 +66,7 @@ func (r *Subscription) Create(ctx context.Context, post entity.CreateSubscriptio
 		&post.CreatedAt,
 		&post.UpdatedAt)
 	if err != nil {
-		log.Fatal(err)
+		return port.ErrSubscriptionAlreadyExists
 	}
 	return nil
 }
@@ -83,7 +83,7 @@ func (r *Subscription) Update(ctx context.Context, post entity.UpdateSubscriptio
 		post.EndDate,
 		post.UpdatedAt)
 	if err != nil {
-		log.Fatal(err)
+		return port.ErrSubscriptionAlreadyExists
 	}
 	if tag.RowsAffected() == 0 {
 		return nil
@@ -97,6 +97,7 @@ func (r *Subscription) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	}
+
 	if tag.RowsAffected() == 0 {
 		return port.ErrNotFound
 	}
