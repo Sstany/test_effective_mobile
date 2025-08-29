@@ -41,7 +41,6 @@ func (r *Subscription) GetSubscription(ctx context.Context, id string) (*entity.
 		&sub.CreatedAt,
 		&sub.UpdatedAt,
 	)
-
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, port.ErrNotFound

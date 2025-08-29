@@ -217,7 +217,8 @@ func (r *Server) GetSubscriptionsSum(
 func (r *Server) DeleteSubscriptionsId(ctx context.Context, request gen.DeleteSubscriptionsIdRequestObject) (gen.DeleteSubscriptionsIdResponseObject, error) {
 	err := r.subUsecase.Delete(ctx, request.Id.String())
 	if err != nil {
-		r.logger.Error("subscription not found")
+		r.logger.Error("delete subscription", zap.Error(err))
+
 		if errors.Is(err, usecase.ErrNotFound) {
 			return gen.DeleteSubscriptionsId404JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 		}
@@ -232,9 +233,12 @@ func (r *Server) GetSubscriptionsId(
 ) (gen.GetSubscriptionsIdResponseObject, error) {
 	sub, err := r.subUsecase.Read(ctx, request.Id.String())
 	if err != nil {
+		r.logger.Error("get subscription", zap.Error(err))
+
 		if errors.Is(err, usecase.ErrNotFound) {
 			return gen.GetSubscriptionsId404JSONResponse{}, nil
 		}
+		return nil, err
 	}
 
 	userID := pkg.UUID(sub.UserID)
@@ -264,6 +268,8 @@ func (r *Server) PutSubscriptionsId(
 	sub.Price = price
 	t_s, err := time.Parse("01-2006", request.Body.StartDate)
 	if err != nil {
+		r.logger.Error("parse start date", zap.Error(err))
+
 		if errors.Is(err, &time.ParseError{}) {
 			return gen.PutSubscriptionsId400JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 		}
@@ -273,6 +279,8 @@ func (r *Server) PutSubscriptionsId(
 	if request.Body.EndDate != nil {
 		t_e, err := time.Parse("01-2006", *request.Body.EndDate)
 		if err != nil {
+			r.logger.Error("parse end date", zap.Error(err))
+
 			if errors.Is(err, usecase.ErrInvalidSubscriptionData) {
 				return gen.PutSubscriptionsId404JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 			}
@@ -287,12 +295,16 @@ func (r *Server) PutSubscriptionsId(
 
 	err = r.subUsecase.Update(ctx, *sub)
 	if err != nil {
+		r.logger.Error("update subscription", zap.Error(err))
+
 		if errors.Is(err, usecase.ErrSubscriptionAlreadyExists) {
 			return gen.PutSubscriptionsId400JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 		}
 		if errors.Is(err, usecase.ErrNotFound) {
 			return gen.PutSubscriptionsId404JSONResponse{Errors: pkg.PointerTo(err.Error())}, nil
 		}
+
+		return nil, err
 	}
 
 	return gen.PutSubscriptionsId204Response{}, nil

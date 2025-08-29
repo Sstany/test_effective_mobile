@@ -73,6 +73,9 @@ func (r *Subscription) Create(
 func (r *Subscription) Read(ctx context.Context, id string) (*entity.Subscription, error) {
 	sub, err := r.subscriptionRepo.GetSubscription(ctx, id)
 	if err != nil {
+		if errors.Is(err, port.ErrNotFound) {
+			return nil, ErrNotFound
+		}
 		return nil, fmt.Errorf("failed to get subscription: %w", err)
 	}
 
@@ -115,7 +118,7 @@ func (r *Subscription) update(ctx context.Context, post entity.UpdateSubscriptio
 		}
 		errR := tx.Rollback(ctx)
 		if errR != nil {
-			r.logger.Error("transaction rollback failed", zap.Error(err))
+			r.logger.Error("transaction rollback failed", zap.Error(errR))
 		}
 
 		if errors.Is(err, port.ErrNotFound) {
@@ -126,7 +129,7 @@ func (r *Subscription) update(ctx context.Context, post entity.UpdateSubscriptio
 	}
 
 	if err = tx.Commit(ctx); err != nil {
-		return fmt.Errorf("update trancastion: %w", err)
+		return fmt.Errorf("commit trancastion: %w", err)
 	}
 
 	return nil
